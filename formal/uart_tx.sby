@@ -1,0 +1,21 @@
+# Run from the repository root:  make formal
+[tasks]
+bmc
+cover
+
+[options]
+depth 64
+bmc:   mode bmc
+cover: mode cover
+
+[engines]
+smtbmc yices
+
+[script]
+read_verilog -formal uart_tx.v
+read_verilog -formal uart_tx_props.v
+prep -top uart_tx_props
+
+[files]
+rtl/uart_tx.v
+formal/uart_tx_props.v

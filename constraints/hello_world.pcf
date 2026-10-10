@@ -1,0 +1,12 @@
+# Constraints used by the build. Subset of the official Nandland
+# Go_Board_Pin_Constraints.pcf -- see go_board_reference.pcf for the full
+# board pinout to copy from when adding LEDs, switches, 7-seg, VGA or PMOD.
+
+# Main FPGA clock: 25 MHz on-board oscillator
+set_io i_Clk 15
+
+# UART TX to the on-board FT2232H (channel B)
+set_io o_UART_TX 74
+
+# LED 1 (heartbeat: toggles once per message sent)
+set_io o_LED_1 56

@@ -1,0 +1,16 @@
+# Build products (everything the tools emit, including sby work dirs)
+build/
+
+# SymbiYosys work directories if sby is run by hand with its default prefix
+formal/uart_tx_bmc*/
+formal/uart_tx_cover*/
+
+# Simulation output
+*.vvp
+*.vcd
+*.fst
+
+# Editors / OS
+*.swp
+*~
+.DS_Store
