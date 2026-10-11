@@ -24,8 +24,17 @@ The `.pcf` is only consulted at place & route, which is why a typo in a pin
 number surfaces late in the build rather than at synthesis.
 
 The constraints file is deliberately trimmed to the three pins this design
-drives. nextpnr fails on a `set_io` that names a port the design does not have,
-so the full board pinout lives alongside it in
+drives. nextpnr treats the two directions asymmetrically, and the asymmetry is
+worth knowing: a **port with no `set_io` is a hard error** —
+
+```text
+ERROR: IO 'o_LED_1' is unconstrained in PCF (override this error with --pcf-allow-unconstrained)
+```
+
+— while a `set_io` naming a port the design does not have is only a **warning**
+(`unmatched constraint 'o_Typo'`). So the binding requirement is that every port
+is covered; trimming is about keeping the warning count at zero rather than
+about the build breaking. The full board pinout lives alongside it in
 `constraints/go_board_reference.pcf` for copy-paste when the design grows.
 
 ## Make targets

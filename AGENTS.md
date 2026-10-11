@@ -21,7 +21,10 @@ Run `sby` from the repository root (via `make formal`), not from `formal/`.
 - `sim/tb_hello_world.v` instantiates the design with `GAP_MS(2)`. Anything
   else about the simulated configuration must match synthesis.
 - `constraints/hello_world.pcf` is trimmed to the ports the design actually
-  has — nextpnr errors on `set_io` for a missing port. Grow it in step with the
+  has. The hard rule is the one that bites: a port with no `set_io` makes
+  nextpnr error out. The reverse is lenient — a `set_io` naming a port that does
+  not exist only warns (`unmatched constraint`). So keeping the file in step
+  with the RTL buys zero warnings, not a working build. Grow it alongside the
   RTL; `constraints/go_board_reference.pcf` is the source to copy from.
 - `all` deliberately does not program the board. Do not add `prog` to it.
 
