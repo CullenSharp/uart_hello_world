@@ -23,6 +23,17 @@ bitstream is known good on hardware.
 - Documentation: README plus `docs/` covering architecture, UART protocol,
   toolchain and board bring-up.
 
+### Fixed
+
+- Corrected the documented power-on model. The RTL comment, makefile, and
+  `docs/architecture.md` and `docs/toolchain.md` all claimed iCE40 loads each
+  register's declared initial value from the bitstream. Per Lattice
+  FPGA-DS-02029, flip-flops are cleared by the global reset asserted throughout
+  configuration — "the wake-up state is always reset" — so no per-flop initial
+  value reaches the silicon and the declaration initializers seed simulation
+  only. The synchronous reset was always what establishes the hardware state;
+  the design behaviour is unchanged, only the stated reason for it.
+
 ### Notes
 
 - Built to a `.bin` bitstream (129/1280 logic cells, 151.6 MHz against a 25 MHz

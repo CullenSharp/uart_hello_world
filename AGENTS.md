@@ -36,8 +36,12 @@ Run `sby` from the repository root (via `make formal`), not from `formal/`.
   lines name the copied basenames inside the work directory.
 - Verilator lint runs `-Wall` with warnings as errors. The only waiver is
   `PROCASSINIT`, because power-on declaration initializers plus a synchronous
-  reset are intentional here (iCE40 loads initial values from the bitstream).
-  Do not add waivers without updating the comment in the makefile.
+  reset are intentional here. The two are not redundant: iCE40 flip-flops are
+  cleared by the global reset that asserts throughout configuration, so a
+  declared initializer never reaches the bitstream (FPGA-DS-02029 — "the
+  wake-up state is always reset"). It seeds simulation; the reset branch is
+  what fixes the hardware state. Do not add waivers without updating the
+  comment in the makefile.
 - Comparing a narrow register to a 32-bit expression trips `WIDTHEXPAND`; a
   32-bit expression in a sized `localparam` trips `WIDTHTRUNC`. Stage constants
   through a 32-bit `localparam` and slice, as the `*_FULL` constants do.

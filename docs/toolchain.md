@@ -72,9 +72,11 @@ make NEXTPNR=/opt/nextpnr/bin/nextpnr-ice40 sim
 
 **Lint.** `verilator --lint-only -Wall` runs with warnings as errors. The one
 waiver is `PROCASSINIT`, because this design intentionally declares a power-on
-value *and* assigns the register in a reset branch — the iCE40 takes the
-power-on value from the bitstream, and the reset makes restart behaviour
-explicit. The reasoning is recorded in the makefile next to the flag so it
+value *and* assigns the register in a reset branch. Those two are not
+redundant. The initializer only seeds simulation: iCE40 flip-flops are cleared
+by the global reset that asserts throughout configuration, so a declared value
+never reaches the bitstream. The reset branch is what fixes the power-on state
+in hardware. The reasoning is recorded in the makefile next to the flag so it
 cannot silently become a habit.
 
 **Simulation.** Icarus compiles the RTL together with `sim/tb_hello_world.v`.

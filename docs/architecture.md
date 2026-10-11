@@ -88,13 +88,27 @@ would advance the sequencer early.
 ## Design decisions worth knowing
 
 **Power-on reset, not a reset button.** The Go Board exposes no reset pin, so
-the design leans on how iCE40 devices actually work: Yosys writes every
-register's declared initial value into the bitstream and the FPGA comes out of
-configuration already in a known state. A 16-cycle power-on counter then holds
-`uart_tx` in reset to make the start explicit and to keep the module reusable in
-designs that do have a reset. This is why the registers carry both a
-declaration initializer and a synchronous reset branch, which is exactly what
-the waived `PROCASSINIT` lint warning is about.
+the design supplies its own. The premise is worth stating precisely, because it
+is the opposite of what the source code appears to say.
+
+iCE40 flip-flops are all cleared by the global reset that the device asserts
+throughout configuration. The Lattice data sheet is unambiguous: "The global
+reset signal is automatically asserted throughout the configuration process,
+forcing all flip-flops to their defined wake-up state. For PLB flip-flops, the
+wake-up state is always reset, regardless of the PLB flip-flop primitive used in
+the application." The bitstream therefore carries no per-flop initial value —
+not because the tools drop it by accident, but because the silicon has nowhere
+to put it. A declaration initializer such as `reg r_Tx = 1'b1;` seeds
+simulation only; on the board that flip-flop powers up at 0.
+
+The 16-cycle power-on counter is consequently load-bearing rather than
+decorative. It holds `uart_tx` in reset from the first clock edge, which drives
+`r_Tx` to its idle-high state before any byte is sent. Without it the UART line
+would sit low — looking like a start bit — until the design happened to reset
+itself. The registers carry both a declaration initializer and a synchronous
+reset branch because the two serve different worlds: the initializer so
+simulation starts in the right state, the reset so hardware does. That
+redundancy is exactly what the waived `PROCASSINIT` lint warning is about.
 
 **CRLF written as explicit bytes.** Not every Verilog front end recognises the
 `\r` escape inside a string literal — Icarus does not, and silently produces

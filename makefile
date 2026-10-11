@@ -51,8 +51,10 @@ prog: $(build_dir)/$(top).bin
 # ---- Verification ----
 
 # PROCASSINIT is waived because declaring a power-on value and also assigning
-# it in the reset branch is intentional: the iCE40 takes the declared value
-# from the bitstream, the reset makes restart behaviour explicit. Every other
+# it in the reset branch is intentional. The two are not redundant: iCE40
+# flip-flops are cleared by the global reset during configuration, so a
+# declared initializer never reaches the bitstream -- it seeds simulation, and
+# the reset branch is what fixes the power-on state in hardware. Every other
 # -Wall warning is treated as an error.
 VERILATOR_FLAGS = -Wall -Wno-PROCASSINIT
 

@@ -30,8 +30,10 @@ module hello_world #(
     localparam [31:0]  IDX_LAST_FULL = MSG_LEN - 1;
     localparam [IDX_W-1:0] IDX_LAST  = IDX_LAST_FULL[IDX_W-1:0];
 
-    // Power-on reset: the iCE40 loads every register's declared initial value
-    // from the bitstream, so this only matters for making the start explicit.
+    // Power-on reset: iCE40 flip-flops are cleared by the global reset that
+    // the device asserts throughout configuration, so the declared initializers
+    // below seed simulation only. This counter is what actually establishes the
+    // power-on state in hardware -- see docs/architecture.md.
     localparam integer POR_CLKS = 16;
     localparam [31:0]  POR_LAST_FULL = POR_CLKS - 1;
     localparam [3:0]   POR_LAST      = POR_LAST_FULL[3:0];
